@@ -5,16 +5,16 @@ import { AppError } from '../middlewares/errorHandler';
 export class AuthController {
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, senha } = req.body;
+      const { username, password } = req.body;
 
-      if (!email || !senha) {
-        throw new AppError('Email and password are required', 400);
+      if (!username || !password) {
+        throw new AppError('Username and password are required', 400);
       }
 
-      const user = await UserModel.validatePassword(email, senha);
+      const user = await UserModel.validatePassword(username, password);
       
       if (!user) {
-        throw new AppError('Invalid email or password', 401);
+        throw new AppError('Invalid username or password', 401);
       }
 
       res.status(200).json({
