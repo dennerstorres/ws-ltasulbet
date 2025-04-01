@@ -7,6 +7,7 @@ import { notFoundHandler } from './middlewares/notFoundHandler';
 import { healthCheckRouter } from './routes/healthCheck';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
+import teamRoutes from './routes/teamRoutes';
 import { AppDataSource } from './config/ormconfig';
 
 const app: Express = express();
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/health', healthCheckRouter);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/teams', teamRoutes);
 
 // Error handling
 app.use(notFoundHandler);

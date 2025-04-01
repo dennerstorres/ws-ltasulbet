@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import dotenv from 'dotenv';
 import { User } from '../entities/User';
+import { Team } from '../entities/Team';
 
 dotenv.config();
 
@@ -13,7 +14,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: false,
   logging: ['query', 'error', 'schema', 'warn', 'info', 'log', 'migration'],
-  entities: [User],
+  entities: [User, Team],
   migrations: ['src/migrations/*.ts'],
   subscribers: [],
   maxQueryExecutionTime: 1000,
