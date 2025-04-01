@@ -2,8 +2,11 @@ import { DataSource } from 'typeorm';
 import dotenv from 'dotenv';
 import { User } from '../entities/User';
 import { Team } from '../entities/Team';
+import path from 'path';
 
 dotenv.config();
+
+const isProd = process.env.NODE_ENV === 'production';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -14,8 +17,8 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: false,
   logging: ['query', 'error', 'schema', 'warn', 'info', 'log', 'migration'],
-  entities: [User, Team],
-  migrations: ['src/migrations/*.ts'],
+  entities: isProd ? ['dist/entities/*.js'] : [User, Team],
+  migrations: isProd ? ['dist/migrations/*.js'] : ['src/migrations/*.ts'],
   subscribers: [],
   maxQueryExecutionTime: 1000,
   extra: {
