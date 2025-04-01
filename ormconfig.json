@@ -1,0 +1,19 @@
+{
+  "type": "mysql",
+  "host": "localhost",
+  "port": 3306,
+  "username": "root",
+  "password": "",
+  "database": "ltasulbet",
+  "synchronize": false,
+  "logging": ["query", "error", "schema", "warn", "info", "log", "migration"],
+  "entities": ["src/entities/*.ts"],
+  "migrations": ["src/migrations/*.ts"],
+  "subscribers": [],
+  "maxQueryExecutionTime": 1000,
+  "extra": {
+    "connectionLimit": 10,
+    "waitForConnections": true,
+    "queueLimit": 0
+  }
+} 

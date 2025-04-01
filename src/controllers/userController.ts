@@ -1,8 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
-import { UserModel, User } from '../models/User';
+import { UserModel } from '../models/User';
 import { AppError } from '../middlewares/errorHandler';
 
 export class UserController {
+  /**
+   * Creates a new user
+   * @param req Express request object containing user data
+   * @param res Express response object
+   * @param next Express next function
+   */
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
       const user = await UserModel.create(req.body);
@@ -15,6 +21,12 @@ export class UserController {
     }
   }
 
+  /**
+   * Retrieves all users
+   * @param req Express request object
+   * @param res Express response object
+   * @param next Express next function
+   */
   static async findAll(req: Request, res: Response, next: NextFunction) {
     try {
       const users = await UserModel.findAll();
@@ -27,6 +39,12 @@ export class UserController {
     }
   }
 
+  /**
+   * Retrieves a user by ID
+   * @param req Express request object containing user ID in params
+   * @param res Express response object
+   * @param next Express next function
+   */
   static async findById(req: Request, res: Response, next: NextFunction) {
     try {
       const user = await UserModel.findById(parseInt(req.params.id));
@@ -42,6 +60,12 @@ export class UserController {
     }
   }
 
+  /**
+   * Updates a user by ID
+   * @param req Express request object containing user ID in params and update data in body
+   * @param res Express response object
+   * @param next Express next function
+   */
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
       const user = await UserModel.update(parseInt(req.params.id), req.body);
@@ -57,7 +81,13 @@ export class UserController {
     }
   }
 
-  static async delete(req: Request, res: Response, next: NextFunction) {
+  /**
+   * Removes a user by ID
+   * @param req Express request object containing user ID in params
+   * @param res Express response object
+   * @param next Express next function
+   */
+  static async remove(req: Request, res: Response, next: NextFunction) {
     try {
       const deleted = await UserModel.delete(parseInt(req.params.id));
       if (!deleted) {
