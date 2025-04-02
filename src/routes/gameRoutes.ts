@@ -15,6 +15,8 @@ router.use(requireAdmin);
 
 router.post('/', GameController.create);
 router.put('/:id', GameController.update);
+router.put('/guess/allow/:weekNumber', GameController.allowGuess);
+router.put('/guess/disallow/:weekNumber', GameController.disallowGuess);
 router.delete('/:id', GameController.remove);
 
 export default router; 

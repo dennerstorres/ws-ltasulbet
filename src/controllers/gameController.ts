@@ -98,4 +98,46 @@ export class GameController {
       next(error);
     }
   }
+
+  /**
+   * Allows guesses for all games in a specific week
+   * @param req Express request object containing week number in params
+   * @param res Express response object
+   * @param next Express next function
+   */
+  static async allowGuess(req: Request, res: Response, next: NextFunction) {
+    try {
+      const weekNumber = parseInt(req.params.weekNumber);
+      const updatedCount = await GameModel.allowGuessesByWeek(weekNumber);
+      
+      res.status(200).json({
+        status: 'success',
+        message: `Updated ${updatedCount} games`,
+        data: { updatedCount }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Disallows guesses for all games in a specific week
+   * @param req Express request object containing week number in params
+   * @param res Express response object
+   * @param next Express next function
+   */
+  static async disallowGuess(req: Request, res: Response, next: NextFunction) {
+    try {
+      const weekNumber = parseInt(req.params.weekNumber);
+      const updatedCount = await GameModel.disallowGuessesByWeek(weekNumber);
+      
+      res.status(200).json({
+        status: 'success',
+        message: `Updated ${updatedCount} games`,
+        data: { updatedCount }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 } 

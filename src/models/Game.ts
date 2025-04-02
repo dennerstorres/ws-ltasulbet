@@ -13,7 +13,6 @@ export class GameModel {
    */
   static async create(gameData: Partial<Game>): Promise<Game> {
     try {
-      // Verifica se os times existem
       const team1 = await this.teamRepository.findOne({ where: { id: gameData.team1Id } });
       const team2 = await this.teamRepository.findOne({ where: { id: gameData.team2Id } });
 
@@ -93,5 +92,31 @@ export class GameModel {
   static async delete(id: number): Promise<boolean> {
     const result = await this.repository.delete(id);
     return result.affected ? result.affected > 0 : false;
+  }
+
+  /**
+   * Allows guesses for all games in a specific week
+   * @param weekNumber Week number
+   * @returns Number of games updated
+   */
+  static async allowGuessesByWeek(weekNumber: number): Promise<number> {
+    const result = await this.repository.update(
+      { weekNumber },
+      { guessAllowed: true }
+    );
+    return result.affected || 0;
+  }
+
+  /**
+   * Disallows guesses for all games in a specific week
+   * @param weekNumber Week number
+   * @returns Number of games updated
+   */
+  static async disallowGuessesByWeek(weekNumber: number): Promise<number> {
+    const result = await this.repository.update(
+      { weekNumber },
+      { guessAllowed: false }
+    );
+    return result.affected || 0;
   }
 } 
