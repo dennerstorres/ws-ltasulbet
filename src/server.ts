@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import dotenv from 'dotenv';
-
 dotenv.config();
 import express, { Express } from 'express';
 import cors from 'cors';
@@ -11,6 +10,7 @@ import { healthCheckRouter } from './routes/healthCheck';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
 import teamRoutes from './routes/teamRoutes';
+import gameRoutes from './routes/gameRoutes';
 import { AppDataSource } from './config/ormconfig';
 
 const app: Express = express();
@@ -26,6 +26,7 @@ app.use('/health', healthCheckRouter);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/teams', teamRoutes);
+app.use('/api/games', gameRoutes);
 
 // Error handling
 app.use(notFoundHandler);
