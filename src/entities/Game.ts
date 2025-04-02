@@ -24,11 +24,11 @@ export class Game {
   @Column({ name: 'weekNumber', type: 'tinyint' })
   weekNumber!: number;
 
-  @Column({ name: 'guessAllowed', type: 'tinyint' })
-  guessAllowed!: number;
+  @Column({ name: 'guessAllowed' })
+  guessAllowed!: boolean;
 
-  @Column({ name: 'guessFinished', type: 'tinyint' })
-  guessFinished!: number;
+  @Column({ name: 'guessFinished' })
+  guessFinished!: boolean;
 
   @CreateDateColumn({ name: 'createdAt' })
   createdAt!: Date;
