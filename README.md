@@ -1,6 +1,6 @@
 # API LTA Sul Bet
 
-API para ser utilizada com o app LTS Sul Bet, onde cada usuário faz palpites nos jogos de cada semana da LTA Sul e o usuário que errar mais, paga uma 
+API para ser utilizada com o app LTA Sul Bet, onde cada usuário faz palpites nos jogos de cada semana da LTA Sul e o usuário que errar mais, paga uma 
 valor em pão de queijo para todos os participantes comerem. :)
 
 ## Estrutura do Projeto
