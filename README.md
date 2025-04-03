@@ -1,30 +1,47 @@
-# WS LTA Sul Bet API
+# API LTA Sul Bet
 
-API REST desenvolvida em Node.js com TypeScript, Express e TypeORM.
+API para ser utilizada com o app LTS Sul Bet, onde cada usuário faz palpites nos jogos de cada semana da LTA Sul e o usuário que errar mais, paga uma 
+valor em pão de queijo para todos os participantes comerem. :)
 
-## 🚀 Tecnologias
+API para gerenciamento de bolão de futebol desenvolvida com Node.js, Express, TypeScript e TypeORM.
+
+## Estrutura do Projeto
+
+```
+src/
+├── config/         # Configurações do projeto
+├── controllers/    # Controladores da aplicação
+├── entities/       # Entidades do TypeORM
+├── middlewares/    # Middlewares do Express
+├── migrations/     # Migrações do banco de dados
+├── models/         # Modelos da aplicação
+├── routes/         # Rotas da API
+├── services/       # Serviços da aplicação
+└── server.ts       # Arquivo principal
+```
+
+## Tecnologias Utilizadas
 
 - Node.js
-- TypeScript
 - Express
+- TypeScript
 - TypeORM
 - MySQL
 - JWT para autenticação
-- BCrypt para criptografia
-- PM2 para gerenciamento de processos
+- bcrypt para hash de senhas
 
-## 📋 Pré-requisitos
+## Requisitos
 
-- Node.js (versão 18 ou superior)
-- MySQL (versão 8 ou superior)
-- NPM ou Yarn
+- Node.js (versão 14 ou superior)
+- MySQL (versão 5.7 ou superior)
+- npm ou yarn
 
-## 🔧 Instalação
+## Instalação
 
 1. Clone o repositório:
 ```bash
-git clone [url-do-repositorio]
-cd ws-ltasulbet
+git clone https://github.com/seu-usuario/api-bolao.git
+cd api-bolao
 ```
 
 2. Instale as dependências:
@@ -33,183 +50,109 @@ npm install
 ```
 
 3. Configure as variáveis de ambiente:
-```bash
-cp .env.example .env
-```
-
-Edite o arquivo `.env` com suas configurações:
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
 ```env
-# Servidor
 PORT=3000
-
-# Banco de dados
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=seu_usuario
 DB_PASSWORD=sua_senha
-DB_NAME=ltasulbet
-
-# JWT
-JWT_SECRET=seu_secret_jwt
-JWT_EXPIRES_IN=24h
+DB_NAME=nome_do_banco
+JWT_SECRET=seu_segredo_jwt
 ```
 
-4. Execute as migrations:
+4. Execute as migrações:
 ```bash
-npm run migration:run
+npm run typeorm migration:run
 ```
 
-## 🚀 Executando
-
-### Desenvolvimento
+5. Inicie o servidor:
 ```bash
 npm run dev
 ```
 
-### Produção
-1. Compile o projeto:
-```bash
-npm run build
-```
-
-2. Inicie o servidor:
-```bash
-npm start
-```
-
-### Usando PM2 (Produção)
-1. Instale o PM2 globalmente:
-```bash
-npm install -g pm2
-```
-
-2. Crie o arquivo de configuração do PM2 (ecosystem.config.js):
-```javascript
-module.exports = {
-  apps: [{
-    name: "WS LTA Sul Bet",
-    script: "./dist/server.js",
-    env: {
-      NODE_ENV: "production",
-    },
-    max_memory_restart: '1G',
-    exec_mode: 'cluster',
-    instances: 1
-  }]
-}
-```
-
-3. Inicie a aplicação:
-```bash
-pm2 start ecosystem.config.js
-```
-
-4. Salve a configuração do PM2:
-```bash
-pm2 save
-```
-
-## 📦 Estrutura do Projeto
-
-```
-src/
-├── config/         # Configurações (banco de dados, etc.)
-├── controllers/    # Controladores
-├── entities/       # Entidades do TypeORM
-├── middlewares/    # Middlewares do Express
-├── migrations/     # Migrações do banco de dados
-├── models/         # Modelos de negócio
-├── routes/         # Rotas da API
-└── server.ts       # Ponto de entrada da aplicação
-```
-
-## 🛣️ Rotas da API
-
-### Autenticação
-- `POST /api/auth/login` - Login de usuário
-- `POST /api/auth/register` - Registro de novo usuário
-
-### Usuários
-- `GET /api/users` - Lista todos os usuários
-- `GET /api/users/:id` - Busca usuário por ID
-- `PUT /api/users/:id` - Atualiza usuário
-- `DELETE /api/users/:id` - Remove usuário
-
-### Times
-- `POST /api/teams` - Cria novo time
-- `GET /api/teams` - Lista todos os times
-- `GET /api/teams/:id` - Busca time por ID
-- `PUT /api/teams/:id` - Atualiza time
-- `DELETE /api/teams/:id` - Remove time
-- `PATCH /api/teams/:id/points` - Atualiza pontos do time
-
-## 🗄️ Banco de Dados
+## Estrutura do Banco de Dados
 
 ### Tabelas
 
-#### Users
-```sql
-CREATE TABLE `user` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(50) NOT NULL,
-  `email` VARCHAR(150) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
-  `points` INT NOT NULL DEFAULT '0',
-  `isAdmin` TINYINT NOT NULL DEFAULT '0',
-  `createdAt` TIMESTAMP NOT NULL DEFAULT (now()),
-  `updatedAt` TIMESTAMP NOT NULL DEFAULT (now()),
-  PRIMARY KEY (`id`)
-);
-```
+#### User
+- Armazena informações dos usuários
+- Campos: id, name, email, password, points, isAdmin, createdAt, updatedAt
 
-#### Teams
-```sql
-CREATE TABLE `team` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(50) NOT NULL,
-  `logo` MEDIUMTEXT NULL,
-  `points` INT NOT NULL DEFAULT '0',
-  `createdAt` TIMESTAMP NOT NULL DEFAULT (now()),
-  `updatedAt` TIMESTAMP NOT NULL DEFAULT (now()),
-  PRIMARY KEY (`id`)
-);
-```
+#### Team
+- Armazena informações das equipes
+- Campos: id, name, logo, points, createdAt, updatedAt
 
-## ⚙️ Scripts Disponíveis
+#### Game
+- Armazena informações dos jogos
+- Campos: id, team1Id, team2Id, date, time, type, weekNumber, guessAllowed, guessFinished, createdAt, updatedAt
+
+#### Guess
+- Armazena os palpites dos usuários
+- Campos: id, gameId, userId, team1Id, team2Id, score1, score2, date, type, points, finished, createdAt, updatedAt
+- Relacionamentos:
+  - gameId -> Game (FK)
+  - userId -> User (FK)
+  - team1Id -> Team (FK)
+  - team2Id -> Team (FK)
+
+## Endpoints da API
+
+### Autenticação
+- POST `/api/auth/login` - Login de usuário
+- GET `/api/auth/me` - Retorna dados do usuário autenticado
+
+### Usuários
+- POST `/api/users` - Cria um novo usuário
+- GET `/api/users` - Lista todos os usuários
+- GET `/api/users/:id` - Busca um usuário específico
+- PUT `/api/users/:id` - Atualiza um usuário
+- DELETE `/api/users/:id` - Remove um usuário
+
+### Times
+- POST `/api/teams` - Cria um novo time
+- GET `/api/teams` - Lista todos os times
+- GET `/api/teams/:id` - Busca um time específico
+- PUT `/api/teams/:id` - Atualiza um time
+- DELETE `/api/teams/:id` - Remove um time
+- PUT `/api/teams/:id/points` - Atualiza pontos de um time
+
+### Jogos
+- POST `/api/games` - Cria um novo jogo
+- GET `/api/games` - Lista todos os jogos
+- GET `/api/games/:id` - Busca um jogo específico
+- PUT `/api/games/:id` - Atualiza um jogo
+- DELETE `/api/games/:id` - Remove um jogo
+- PUT `/api/games/:weekNumber/allow-guess` - Permite palpites para todos os jogos de uma semana
+
+### Palpites
+- POST `/api/guesses` - Cria um novo palpite (protegido)
+- GET `/api/guesses` - Lista todos os palpites
+- GET `/api/guesses/:id` - Busca um palpite específico
+- PUT `/api/guesses/:id` - Atualiza um palpite (protegido)
+- DELETE `/api/guesses/:id` - Remove um palpite (protegido)
+- GET `/api/guesses/user/:userId` - Lista palpites de um usuário (protegido)
+- GET `/api/guesses/game/:gameId` - Lista palpites de um jogo (protegido)
+- PUT `/api/guesses/:id/points` - Atualiza pontos de um palpite (protegido)
+- PUT `/api/guesses/:id/finish` - Marca um palpite como finalizado (protegido)
+
+## Scripts Disponíveis
 
 - `npm run dev` - Inicia o servidor em modo desenvolvimento
-- `npm run build` - Compila o projeto para produção
+- `npm run build` - Compila o projeto
 - `npm start` - Inicia o servidor em modo produção
-- `npm run migration:generate` - Gera uma nova migration
-- `npm run migration:run` - Executa as migrations pendentes
-- `npm run migration:revert` - Reverte a última migration
+- `npm run typeorm migration:create` - Cria uma nova migration
+- `npm run typeorm migration:run` - Executa as migrations pendentes
+- `npm run typeorm migration:revert` - Reverte a última migration executada
 
-## 🔒 Segurança
+## Contribuição
 
-- Senhas são armazenadas com hash usando BCrypt
-- Autenticação via JWT
-- CORS configurado
-- Validação de dados nas requisições
-- Tratamento de erros centralizado
-
-## 📝 Logs
-
-Os logs são gerenciados pelo TypeORM e incluem:
-- Queries SQL
-- Erros
-- Schemas
-- Warnings
-- Informações gerais
-- Logs de migração
-
-## 🤝 Contribuindo
-
-1. Faça o fork do projeto
-2. Crie sua feature branch (`git checkout -b feature/MinhaFeature`)
-3. Commit suas mudanças (`git commit -m 'Adicionando nova feature'`)
-4. Push para a branch (`git push origin feature/MinhaFeature`)
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
 
-## 📄 Licença
+## Licença
 
-Este projeto está sob a licença ISC. 
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes. 
