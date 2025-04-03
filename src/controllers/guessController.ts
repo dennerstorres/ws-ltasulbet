@@ -30,6 +30,7 @@ export class GuessController {
   static async findAll(req: Request, res: Response, next: NextFunction) {
     try {
       const guesses = await GuessModel.findAll();
+      console.log('guesses', guesses);
       res.status(200).json({
         status: 'success',
         data: guesses
@@ -69,6 +70,7 @@ export class GuessController {
   static async findByUserId(req: Request, res: Response, next: NextFunction) {
     try {
       const guesses = await GuessModel.findByUserId(parseInt(req.params.userId));
+      console.log('guesses', guesses);
       res.status(200).json({
         status: 'success',
         data: guesses
