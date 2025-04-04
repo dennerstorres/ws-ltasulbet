@@ -107,7 +107,7 @@ export class UserModel {
    * @returns Boolean indicating if password was updated
    */
   static async updatePassword(id: number, currentPassword: string, newPassword: string): Promise<boolean> {
-    const user = await this.findById(id);
+    const user = await this.repository.findOneBy({ id });
     if (!user) {
       throw new Error('User not found');
     }
