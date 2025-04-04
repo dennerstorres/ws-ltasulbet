@@ -98,4 +98,39 @@ export class UserController {
       next(error);
     }
   }
+
+  /**
+   * Updates the user's password
+   * @param req Express request object containing user ID in params and passwords in body
+   * @param res Express response object
+   * @param next Express next function
+   */
+  static async updatePassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      
+      if (!currentPassword || !newPassword) {
+        throw new AppError('Current password and new password are required', 400);
+      }
+
+      await UserModel.updatePassword(parseInt(req.params.id), currentPassword, newPassword);
+      
+      res.status(200).json({
+        status: 'success',
+        message: 'Password updated successfully'
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === 'User not found') {
+          next(new AppError('User not found', 404));
+        } else if (error.message === 'Current password is incorrect') {
+          next(new AppError('Current password is incorrect', 401));
+        } else {
+          next(error);
+        }
+      } else {
+        next(error);
+      }
+    }
+  }
 } 

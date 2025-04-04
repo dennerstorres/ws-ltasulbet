@@ -100,17 +100,44 @@ export class UserModel {
   }
 
   /**
+   * Updates user password
+   * @param id User ID
+   * @param currentPassword Current password
+   * @param newPassword New password
+   * @returns Boolean indicating if password was updated
+   */
+  static async updatePassword(id: number, currentPassword: string, newPassword: string): Promise<boolean> {
+    const user = await this.findById(id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const isPasswordValid = await PasswordService.comparePasswords(currentPassword, user.password);
+    if (!isPasswordValid) {
+      throw new Error('Current password is incorrect');
+    }
+
+    const hashedPassword = await PasswordService.hashPassword(newPassword);
+    await this.repository.update(id, { password: hashedPassword });
+    return true;
+  }
+
+  /**
    * Validates user password
    * @param email User email
    * @param password Password to validate
    * @returns User without password if valid, null otherwise
    */
   static async validatePassword(email: string, password: string): Promise<User | null> {
-    const user = await this.repository.findOneBy({ email });
-    if (!user) return null;
+    const user = await this.findByEmail(email);
+    if (!user) {
+      return null;
+    }
 
-    const isValid = await PasswordService.comparePasswords(password, user.password);
-    if (!isValid) return null;
+    const isPasswordValid = await PasswordService.comparePasswords(password, user.password);
+    if (!isPasswordValid) {
+      return null;
+    }
 
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword as User;
