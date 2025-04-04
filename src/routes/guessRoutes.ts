@@ -11,7 +11,6 @@ router.get('/user/:userId', GuessController.findByUserId);
 router.put('/:id/finish', GuessController.finish);
 router.put('/:id/unfinish', GuessController.unfinish);
 
-router.use(requireAdmin);
 router.post('/', GuessController.create);
 router.put('/:id', GuessController.update);
 router.delete('/:id', GuessController.remove);
