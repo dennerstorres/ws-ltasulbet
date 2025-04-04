@@ -18,12 +18,16 @@ export class AuthController {
         throw new AppError('Usuário e senha são obrigatórios', 400);
       }
 
+      console.log(username, password);
+
       const user = await UserModel.validatePassword(username, password);
+      console.log(user);
       if (!user) {
         throw new AppError('Usuário ou senha inválidos', 401);
       }
 
       const token = JWTService.generateToken(user);
+      console.log(token);
 
       res.status(200).json({
         status: 'success',
