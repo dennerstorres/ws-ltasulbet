@@ -12,6 +12,7 @@ import authRoutes from './routes/authRoutes';
 import teamRoutes from './routes/teamRoutes';
 import gameRoutes from './routes/gameRoutes';
 import guessRoutes from './routes/guessRoutes';
+import resultRoutes from './routes/resultRoutes';
 import { AppDataSource } from './config/ormconfig';
 
 const app: Express = express();
@@ -29,6 +30,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/games', gameRoutes);
 app.use('/api/guesses', guessRoutes);
+app.use('/api/results', resultRoutes);
 
 // Error handling
 app.use(notFoundHandler);
