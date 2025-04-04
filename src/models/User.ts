@@ -129,7 +129,7 @@ export class UserModel {
    * @returns User without password if valid, null otherwise
    */
   static async validatePassword(email: string, password: string): Promise<User | null> {
-    const user = await this.findByEmail(email);
+    const user = await this.repository.findOneBy({ email });
     if (!user) {
       return null;
     }
