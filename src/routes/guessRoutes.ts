@@ -9,6 +9,7 @@ router.get('/', GuessController.findAll);
 router.get('/:id', GuessController.findById);
 router.get('/user/:userId', GuessController.findByUserId);
 router.put('/:id/finish', GuessController.finish);
+router.put('/:id/unfinish', GuessController.unfinish);
 
 router.use(requireAdmin);
 router.post('/', GuessController.create);

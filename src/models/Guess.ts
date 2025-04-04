@@ -117,4 +117,15 @@ export class GuessModel {
     await this.repository.update(id, { finished: true });
     return await this.findById(id);
   }
+
+
+  /**
+   * Marca um palpite como não finalizado
+   * @param id ID do palpite
+   * @returns Palpite atualizado ou null se não encontrado
+   */
+  static async unfinish(id: number): Promise<Guess | null> {
+    await this.repository.update(id, { finished: false });
+    return await this.findById(id);
+  }
 } 

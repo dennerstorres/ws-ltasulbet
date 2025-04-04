@@ -178,4 +178,26 @@ export class GuessController {
       next(error);
     }
   }
+
+
+  /**
+   * Marca um palpite como finalizado
+   * @param req Express request object contendo ID do palpite nos parâmetros
+   * @param res Express response object
+   * @param next Express next function
+   */
+  static async unfinish(req: Request, res: Response, next: NextFunction) {
+    try {
+      const guess = await GuessModel.unfinish(parseInt(req.params.id));
+      if (!guess) {
+        throw new AppError('Palpite não encontrado', 404);
+      }
+      res.status(200).json({
+        status: 'success',
+        data: guess
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 } 
