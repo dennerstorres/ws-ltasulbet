@@ -14,6 +14,7 @@ export class PushNotificationController {
      */
     static async subscribe(req: Request, res: Response, next: NextFunction) {
         try {
+            console.log('subscribe: ', req.body);
             const subscription = new PushSubscription();
             subscription.endpoint = req.body.endpoint;
             subscription.keys = req.body.keys;
