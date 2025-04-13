@@ -13,6 +13,7 @@ import teamRoutes from './routes/teamRoutes';
 import gameRoutes from './routes/gameRoutes';
 import guessRoutes from './routes/guessRoutes';
 import resultRoutes from './routes/resultRoutes';
+import pushNotificationRoutes from './routes/pushNotificationRoutes';
 import { AppDataSource } from './config/ormconfig';
 
 const app: Express = express();
@@ -31,6 +32,7 @@ app.use('/api/teams', teamRoutes);
 app.use('/api/games', gameRoutes);
 app.use('/api/guesses', guessRoutes);
 app.use('/api/results', resultRoutes);
+app.use('/api/push', pushNotificationRoutes);
 
 // Error handling
 app.use(notFoundHandler);
