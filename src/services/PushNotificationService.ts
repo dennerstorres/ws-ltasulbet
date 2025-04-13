@@ -5,10 +5,12 @@ import { AppDataSource } from '../config/ormconfig';
 export class PushNotificationService {
     private static instance: PushNotificationService;
     private expo: Notifications.Expo;
+    private repository: any;
 
     private constructor() {
         console.log('Inicializando PushNotificationService...');
         this.expo = new Notifications.Expo();
+        this.repository = AppDataSource.getRepository(PushSubscription);
         console.log('PushNotificationService inicializado com sucesso');
     }
 
@@ -22,13 +24,9 @@ export class PushNotificationService {
         return PushNotificationService.instance;
     }
 
-    private getRepository() {
-        return AppDataSource.getRepository(PushSubscription);
-    }
-
     public async subscribe(subscription: PushSubscription): Promise<PushSubscription> {
         console.log('Tentando salvar subscription:', subscription);
-        const saved = await this.getRepository().save(subscription);
+        const saved = await this.repository.save(subscription);
         console.log('Subscription salva com sucesso:', saved);
         return saved;
     }
@@ -63,7 +61,7 @@ export class PushNotificationService {
 
     public async sendNotificationToAll(payload: any): Promise<void> {
         console.log('Buscando todas as subscriptions...');
-        const subscriptions = await this.getRepository().find();
+        const subscriptions = await this.repository.find();
         console.log('Subscriptions encontradas:', subscriptions.length);
         
         for (const subscription of subscriptions) {
