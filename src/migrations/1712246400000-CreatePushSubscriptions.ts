@@ -14,13 +14,19 @@ export class CreatePushSubscriptions1712246400000 implements MigrationInterface 
                         generationStrategy: "increment",
                     },
                     {
-                        name: "endpoint",
+                        name: "token",
                         type: "varchar",
                         length: "500",
                     },
                     {
-                        name: "keys",
-                        type: "json",
+                        name: "platform",
+                        type: "varchar",
+                        length: "50",
+                    },
+                    {
+                        name: "deviceId",
+                        type: "varchar",
+                        length: "100",
                     },
                     {
                         name: "createdAt",

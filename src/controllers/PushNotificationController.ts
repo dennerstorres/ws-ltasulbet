@@ -15,9 +15,16 @@ export class PushNotificationController {
     static async subscribe(req: Request, res: Response, next: NextFunction) {
         try {
             console.log('subscribe: ', req.body);
+            const { token, platform, deviceId } = req.body;
+
+            if (!token || !platform || !deviceId) {
+                throw new AppError('Token, platform e deviceId são obrigatórios', 400);
+            }
+
             const subscription = new PushSubscription();
-            subscription.endpoint = req.body.endpoint;
-            subscription.keys = req.body.keys;
+            subscription.token = token;
+            subscription.platform = platform;
+            subscription.deviceId = deviceId;
 
             const savedSubscription = await this.pushService.subscribe(subscription);
             res.status(201).json({
@@ -42,8 +49,6 @@ export class PushNotificationController {
                 notification: {
                     title,
                     body,
-                    icon: '/icon.png',
-                    badge: '/badge.png'
                 },
                 data
             };
