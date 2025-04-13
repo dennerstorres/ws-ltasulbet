@@ -1,32 +1,41 @@
 import { PushSubscription } from '../entities/PushSubscription';
-import { getRepository } from 'typeorm';
 import * as Notifications from 'expo-server-sdk';
+import { AppDataSource } from '@/config/ormconfig';
 
 export class PushNotificationService {
     private static instance: PushNotificationService;
     private expo: Notifications.Expo;
 
     private constructor() {
+        console.log('Inicializando PushNotificationService...');
         this.expo = new Notifications.Expo();
+        console.log('PushNotificationService inicializado com sucesso');
     }
 
     public static getInstance(): PushNotificationService {
+        console.log('Obtendo instância do PushNotificationService...');
         if (!PushNotificationService.instance) {
+            console.log('Criando nova instância do PushNotificationService');
             PushNotificationService.instance = new PushNotificationService();
         }
+        console.log('Instância do PushNotificationService obtida com sucesso');
         return PushNotificationService.instance;
     }
 
     private getRepository() {
-        return getRepository(PushSubscription);
+        return AppDataSource.getRepository(PushSubscription);
     }
 
     public async subscribe(subscription: PushSubscription): Promise<PushSubscription> {
-        return await this.getRepository().save(subscription);
+        console.log('Tentando salvar subscription:', subscription);
+        const saved = await this.getRepository().save(subscription);
+        console.log('Subscription salva com sucesso:', saved);
+        return saved;
     }
 
     public async sendNotification(subscription: PushSubscription, payload: any): Promise<void> {
         try {
+            console.log('Enviando notificação para:', subscription);
             const message = {
                 to: subscription.token,
                 sound: 'default',
@@ -53,7 +62,10 @@ export class PushNotificationService {
     }
 
     public async sendNotificationToAll(payload: any): Promise<void> {
+        console.log('Buscando todas as subscriptions...');
         const subscriptions = await this.getRepository().find();
+        console.log('Subscriptions encontradas:', subscriptions.length);
+        
         for (const subscription of subscriptions) {
             try {
                 await this.sendNotification(subscription, payload);
