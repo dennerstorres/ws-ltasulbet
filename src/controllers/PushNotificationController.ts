@@ -32,7 +32,7 @@ export class PushNotificationController {
                 data: savedSubscription
             });
         } catch (error) {
-            next(new AppError('Erro ao salvar inscrição', 500));
+            next(new AppError('Erro ao salvar inscrição'+error, 500));
         }
     }
 
