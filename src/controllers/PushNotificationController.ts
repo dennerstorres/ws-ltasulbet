@@ -4,7 +4,14 @@ import { PushSubscription } from '../entities/PushSubscription';
 import { AppError } from '../middlewares/errorHandler';
 
 export class PushNotificationController {
-    private static pushService = PushNotificationService.getInstance();
+    private static pushService: PushNotificationService;
+
+    private static getPushService(): PushNotificationService {
+        if (!this.pushService) {
+            this.pushService = PushNotificationService.getInstance();
+        }
+        return this.pushService;
+    }
 
     /**
      * Registra uma nova inscrição para notificações push
@@ -26,13 +33,13 @@ export class PushNotificationController {
             subscription.platform = platform;
             subscription.deviceId = deviceId;
 
-            const savedSubscription = await this.pushService.subscribe(subscription);
+            const savedSubscription = await this.getPushService().subscribe(subscription);
             res.status(201).json({
                 status: 'success',
                 data: savedSubscription
             });
         } catch (error) {
-            next(new AppError('Erro ao salvar inscrição'+error, 500));
+            next(new AppError('Erro ao salvar inscrição: ' + error, 500));
         }
     }
 
@@ -53,13 +60,13 @@ export class PushNotificationController {
                 data
             };
 
-            await this.pushService.sendNotificationToAll(payload);
+            await this.getPushService().sendNotificationToAll(payload);
             res.status(200).json({
                 status: 'success',
                 message: 'Notificação enviada com sucesso'
             });
         } catch (error) {
-            next(new AppError('Erro ao enviar notificação', 500));
+            next(new AppError('Erro ao enviar notificação: ' + error, 500));
         }
     }
 } 
