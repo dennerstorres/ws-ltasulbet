@@ -1,6 +1,6 @@
 import { PushSubscription } from '../entities/PushSubscription';
 import * as Notifications from 'expo-server-sdk';
-import { AppDataSource } from '@/config/ormconfig';
+import { AppDataSource } from '../config/ormconfig';
 
 export class PushNotificationService {
     private static instance: PushNotificationService;
