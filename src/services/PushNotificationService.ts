@@ -3,25 +3,14 @@ import * as Notifications from 'expo-server-sdk';
 import { AppDataSource } from '../config/ormconfig';
 
 export class PushNotificationService {
-    private static instance: PushNotificationService;
     private expo: Notifications.Expo;
     private repository: any;
 
-    private constructor() {
+    constructor() {
         console.log('Inicializando PushNotificationService...');
         this.expo = new Notifications.Expo();
         this.repository = AppDataSource.getRepository(PushSubscription);
         console.log('PushNotificationService inicializado com sucesso');
-    }
-
-    public static getInstance(): PushNotificationService {
-        console.log('Obtendo instância do PushNotificationService...');
-        if (!PushNotificationService.instance) {
-            console.log('Criando nova instância do PushNotificationService');
-            PushNotificationService.instance = new PushNotificationService();
-        }
-        console.log('Instância do PushNotificationService obtida com sucesso');
-        return PushNotificationService.instance;
     }
 
     public async subscribe(subscription: PushSubscription): Promise<PushSubscription> {

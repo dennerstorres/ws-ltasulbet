@@ -4,8 +4,6 @@ import { PushSubscription } from '../entities/PushSubscription';
 import { AppError } from '../middlewares/errorHandler';
 
 export class PushNotificationController {
-    private static pushService: PushNotificationService = PushNotificationService.getInstance();
-
     /**
      * Registra uma nova inscrição para notificações push
      * @param req Express request object contendo os dados da inscrição
@@ -26,8 +24,8 @@ export class PushNotificationController {
             subscription.platform = platform;
             subscription.deviceId = deviceId;
 
-            console.log('PushService:', this.pushService);
-            const savedSubscription = await this.pushService.subscribe(subscription);
+            const pushService = new PushNotificationService();
+            const savedSubscription = await pushService.subscribe(subscription);
             res.status(201).json({
                 status: 'success',
                 data: savedSubscription
@@ -55,8 +53,8 @@ export class PushNotificationController {
                 data
             };
 
-            console.log('PushService:', this.pushService);
-            await this.pushService.sendNotificationToAll(payload);
+            const pushService = new PushNotificationService();
+            await pushService.sendNotificationToAll(payload);
             res.status(200).json({
                 status: 'success',
                 message: 'Notificação enviada com sucesso'
