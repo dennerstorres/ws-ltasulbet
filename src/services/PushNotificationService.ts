@@ -44,7 +44,7 @@ export class PushNotificationService {
                     endpoint: subscription.endpoint,
                     keys: subscription.keys
                 },
-                JSON.stringify(payload)
+                payload.notification.body
             );
         } catch (error) {
             console.error('Erro ao enviar notificação:', error);
