@@ -1,6 +1,6 @@
 import webpush from 'web-push';
 import { PushSubscription } from '../entities/PushSubscription';
-import { AppDataSource } from '../config/ormconfig';mport { AppDataSource } from '../config/ormconfig';from 'typeorm';
+import { AppDataSource } from '../config/ormconfig';
 
 export class PushNotificationService {
     private repository: any;
