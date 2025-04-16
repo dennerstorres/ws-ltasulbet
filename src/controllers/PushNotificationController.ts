@@ -18,6 +18,7 @@ export class PushNotificationController {
             const subscription = new PushSubscription();
             subscription.endpoint = req.body.subscription.endpoint;
             subscription.keys = req.body.subscription.keys;
+            subscription.userId = req.user?.id;
 
             const savedSubscription = await this.pushService.subscribe(subscription);
             res.status(201).json({
@@ -49,6 +50,35 @@ export class PushNotificationController {
             };
 
             await this.pushService.sendNotificationToAll(payload);
+            res.status(200).json({
+                status: 'success',
+                message: 'Notificação enviada com sucesso'
+            });
+        } catch (error) {
+            next(new AppError('Erro ao enviar notificação', 500));
+        }
+    }
+
+    /**
+     * Envia uma notificação para um usuário específico
+     * @param req Express request object contendo os dados da notificação
+     * @param res Express response object
+     * @param next Express next function
+     */
+    static async sendNotificationToUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { userId, title, body, data } = req.body;
+            const payload = {
+                notification: {
+                    title,
+                    body,
+                    icon: '/icon.png',
+                    badge: '/badge.png'
+                },
+                data
+            };
+
+            await this.pushService.sendNotificationToUser(userId, payload);
             res.status(200).json({
                 status: 'success',
                 message: 'Notificação enviada com sucesso'

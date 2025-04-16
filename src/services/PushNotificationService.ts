@@ -54,4 +54,15 @@ export class PushNotificationService {
             }
         }
     }
+
+    public async sendNotificationToUser(userId: number, payload: any): Promise<void> {
+        const subscriptions = await this.getRepository().find({ where: { userId } });
+        for (const subscription of subscriptions) {
+            try {
+                await this.sendNotification(subscription, payload);
+            } catch (error) {
+                console.error(`Erro ao enviar notificação para subscription ${subscription.id}:`, error);
+            }
+        }
+    }
 } 
