@@ -18,7 +18,7 @@ export class PushNotificationController {
             const subscription = new PushSubscription();
             subscription.endpoint = req.body.subscription.endpoint;
             subscription.keys = req.body.subscription.keys;
-            subscription.userId = req.user?.id;
+            subscription.userId = req.body.user?.id;
 
             const savedSubscription = await this.pushService.subscribe(subscription);
             res.status(201).json({
@@ -26,7 +26,7 @@ export class PushNotificationController {
                 data: savedSubscription
             });
         } catch (error) {
-            next(new AppError('Erro ao salvar inscrição', 500));
+            next(new AppError('Erro ao salvar inscrição. ' + error, 500));
         }
     }
 
