@@ -1,47 +1,43 @@
+import webpush from 'web-push';
 import { PushSubscription } from '../entities/PushSubscription';
-import * as Notifications from 'expo-server-sdk';
-import { AppDataSource } from '../config/ormconfig';
+import { getRepository } from 'typeorm';
 
 export class PushNotificationService {
-    private expo: Notifications.Expo;
-    private repository: any;
+    private static instance: PushNotificationService;
 
-    constructor() {
-        console.log('Inicializando PushNotificationService...');
-        this.expo = new Notifications.Expo();
-        this.repository = AppDataSource.getRepository(PushSubscription);
-        console.log('PushNotificationService inicializado com sucesso');
+    private constructor() {
+        // Inicializa as chaves VAPID
+        webpush.setVapidDetails(
+            `mailto:${process.env.VAPID_EMAIL}`,
+            process.env.VAPID_PUBLIC_KEY!,
+            process.env.VAPID_PRIVATE_KEY!
+        );
+    }
+
+    public static getInstance(): PushNotificationService {
+        if (!PushNotificationService.instance) {
+            PushNotificationService.instance = new PushNotificationService();
+        }
+        return PushNotificationService.instance;
+    }
+
+    private getRepository() {
+        return getRepository(PushSubscription);
     }
 
     public async subscribe(subscription: PushSubscription): Promise<PushSubscription> {
-        console.log('Tentando salvar subscription:', subscription);
-        const saved = await this.repository.save(subscription);
-        console.log('Subscription salva com sucesso:', saved);
-        return saved;
+        return await this.getRepository().save(subscription);
     }
 
     public async sendNotification(subscription: PushSubscription, payload: any): Promise<void> {
         try {
-            console.log('Enviando notificação para:', subscription);
-            const message = {
-                to: subscription.token,
-                sound: 'default',
-                title: payload.notification.title,
-                body: payload.notification.body,
-                data: payload.data,
-            };
-
-            const chunks = this.expo.chunkPushNotifications([message]);
-            const tickets = [];
-
-            for (let chunk of chunks) {
-                try {
-                    const ticketChunk = await this.expo.sendPushNotificationsAsync(chunk);
-                    tickets.push(...ticketChunk);
-                } catch (error) {
-                    console.error('Erro ao enviar notificação:', error);
-                }
-            }
+            await webpush.sendNotification(
+                {
+                    endpoint: subscription.endpoint,
+                    keys: subscription.keys
+                },
+                JSON.stringify(payload)
+            );
         } catch (error) {
             console.error('Erro ao enviar notificação:', error);
             throw error;
@@ -49,10 +45,7 @@ export class PushNotificationService {
     }
 
     public async sendNotificationToAll(payload: any): Promise<void> {
-        console.log('Buscando todas as subscriptions...');
-        const subscriptions = await this.repository.find();
-        console.log('Subscriptions encontradas:', subscriptions.length);
-        
+        const subscriptions = await this.getRepository().find();
         for (const subscription of subscriptions) {
             try {
                 await this.sendNotification(subscription, payload);

@@ -4,6 +4,8 @@ import { PushSubscription } from '../entities/PushSubscription';
 import { AppError } from '../middlewares/errorHandler';
 
 export class PushNotificationController {
+    private static pushService = PushNotificationService.getInstance();
+
     /**
      * Registra uma nova inscrição para notificações push
      * @param req Express request object contendo os dados da inscrição
@@ -13,26 +15,17 @@ export class PushNotificationController {
     static async subscribe(req: Request, res: Response, next: NextFunction) {
         try {
             console.log('subscribe: ', req.body);
-            const { token, platform, deviceId } = req.body;
-
-            if (!token || !platform || !deviceId) {
-                throw new AppError('Token, platform e deviceId são obrigatórios', 400);
-            }
-
             const subscription = new PushSubscription();
-            subscription.token = token;
-            subscription.platform = platform;
-            subscription.deviceId = deviceId;
+            subscription.endpoint = req.body.subscription.endpoint;
+            subscription.keys = req.body.subscription.keys;
 
-            const pushService = new PushNotificationService();
-            const savedSubscription = await pushService.subscribe(subscription);
+            const savedSubscription = await this.pushService.subscribe(subscription);
             res.status(201).json({
                 status: 'success',
                 data: savedSubscription
             });
         } catch (error) {
-            console.error('Erro no subscribe:', error);
-            next(new AppError('Erro ao salvar inscrição: ' + error, 500));
+            next(new AppError('Erro ao salvar inscrição', 500));
         }
     }
 
@@ -49,19 +42,19 @@ export class PushNotificationController {
                 notification: {
                     title,
                     body,
+                    icon: '/icon.png',
+                    badge: '/badge.png'
                 },
                 data
             };
 
-            const pushService = new PushNotificationService();
-            await pushService.sendNotificationToAll(payload);
+            await this.pushService.sendNotificationToAll(payload);
             res.status(200).json({
                 status: 'success',
                 message: 'Notificação enviada com sucesso'
             });
         } catch (error) {
-            console.error('Erro no sendNotification:', error);
-            next(new AppError('Erro ao enviar notificação: ' + error, 500));
+            next(new AppError('Erro ao enviar notificação', 500));
         }
     }
 } 

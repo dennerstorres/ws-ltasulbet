@@ -6,13 +6,13 @@ export class PushSubscription {
     id!: number;
 
     @Column()
-    token!: string;
+    endpoint!: string;
 
-    @Column()
-    platform!: string;
-
-    @Column()
-    deviceId!: string;
+    @Column("simple-json")
+    keys!: {
+        p256dh: string;
+        auth: string;
+    };
 
     @CreateDateColumn()
     createdAt!: Date;
