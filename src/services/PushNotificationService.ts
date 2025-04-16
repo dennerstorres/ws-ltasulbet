@@ -1,32 +1,23 @@
 import webpush from 'web-push';
 import { PushSubscription } from '../entities/PushSubscription';
-import { getRepository } from 'typeorm';
+import { AppDataSource } from '../config/ormconfig';mport { AppDataSource } from '../config/ormconfig';from 'typeorm';
 
 export class PushNotificationService {
-    private static instance: PushNotificationService;
+    private repository: any;
 
-    private constructor() {
+    constructor() {
         // Inicializa as chaves VAPID
         webpush.setVapidDetails(
             `mailto:${process.env.VAPID_EMAIL}`,
             process.env.VAPID_PUBLIC_KEY!,
             process.env.VAPID_PRIVATE_KEY!
         );
+        this.repository = AppDataSource.getRepository(PushSubscription);
     }
 
-    public static getInstance(): PushNotificationService {
-        if (!PushNotificationService.instance) {
-            PushNotificationService.instance = new PushNotificationService();
-        }
-        return PushNotificationService.instance;
-    }
-
-    private getRepository() {
-        return getRepository(PushSubscription);
-    }
 
     public async subscribe(subscription: PushSubscription): Promise<PushSubscription> {
-        return await this.getRepository().save(subscription);
+        return await this.repository.save(subscription);
     }
 
     public async sendNotification(subscription: PushSubscription, payload: any): Promise<void> {
@@ -45,7 +36,7 @@ export class PushNotificationService {
     }
 
     public async sendNotificationToAll(payload: any): Promise<void> {
-        const subscriptions = await this.getRepository().find();
+        const subscriptions = await this.repository().find();
         for (const subscription of subscriptions) {
             try {
                 await this.sendNotification(subscription, payload);
@@ -56,7 +47,7 @@ export class PushNotificationService {
     }
 
     public async sendNotificationToUser(userId: number, payload: any): Promise<void> {
-        const subscriptions = await this.getRepository().find({ where: { userId } });
+        const subscriptions = await this.repository().find({ where: { userId } });
         for (const subscription of subscriptions) {
             try {
                 await this.sendNotification(subscription, payload);

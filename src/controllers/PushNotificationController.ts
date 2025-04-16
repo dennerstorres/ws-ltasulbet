@@ -4,7 +4,7 @@ import { PushSubscription } from '../entities/PushSubscription';
 import { AppError } from '../middlewares/errorHandler';
 
 export class PushNotificationController {
-    private static pushService = PushNotificationService.getInstance();
+    private static pushService = new PushNotificationService();
 
     /**
      * Registra uma nova inscrição para notificações push
