@@ -28,6 +28,8 @@ export const AppDataSource = new DataSource({
   extra: {
     connectionLimit: 10,
     waitForConnections: true,
-    queueLimit: 0
+    queueLimit: 0,
+    multipleStatements: true,
+    insertIgnore: true
   }
 }); 
