@@ -6,7 +6,7 @@ import { Guess } from '../entities/Guess';
 export class GuessBlockingService {
   static start(): void {
     const cronExpression = process.env.GUESS_BLOCK_CRON || '0 12 * * 6';
-    const timezone = process.env.TZ || 'America/Sao_Paulo';
+    const timezone = process.env.TZ || 'America/Cuiaba';
 
     cron.schedule(
       cronExpression,
