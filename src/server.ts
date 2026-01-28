@@ -15,6 +15,7 @@ import guessRoutes from './routes/guessRoutes';
 import resultRoutes from './routes/resultRoutes';
 import pushNotificationRoutes from './routes/pushNotificationRoutes';
 import { AppDataSource } from './config/ormconfig';
+import { GuessBlockingService } from './services/guessBlockingService';
 
 const app: Express = express();
 const port = config.port || 3000;
@@ -43,6 +44,8 @@ const startServer = async () => {
   try {
     await AppDataSource.initialize();
     console.log('Database connection successful');
+
+    GuessBlockingService.start();
     
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);

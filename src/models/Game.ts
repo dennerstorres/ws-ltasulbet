@@ -95,6 +95,36 @@ export class GameModel {
   }
 
   /**
+   * Retrieves the next scheduled game on or after the provided reference date/time
+   * @param fromDate Date/time used as reference for the search
+   * @returns The next game or null if none is scheduled
+   */
+  static async findFirstUpcomingGame(fromDate: Date): Promise<Game | null> {
+    const dateStr = this.formatDate(fromDate);
+    const timeStr = this.formatTimeFloorToMinute(fromDate);
+
+    return this.repository
+      .createQueryBuilder('game')
+      .where('game.date > :date', { date: dateStr })
+      .orWhere('game.date = :date AND game.time >= :time', {
+        date: dateStr,
+        time: timeStr
+      })
+      .orderBy('game.date', 'ASC')
+      .addOrderBy('game.time', 'ASC')
+      .getOne();
+  }
+
+  /**
+   * Retrieves all games of a given week
+   * @param weekNumber Week identifier
+   * @returns Array of games
+   */
+  static async findByWeekNumber(weekNumber: number): Promise<Game[]> {
+    return this.repository.find({ where: { weekNumber } });
+  }
+
+  /**
    * Allows guesses for all games in a specific week
    * @param weekNumber Week number
    * @returns Number of games updated
@@ -118,5 +148,25 @@ export class GameModel {
       { guessAllowed: false }
     );
     return result.affected || 0;
+  }
+
+  private static formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private static formatTime(date: Date): string {
+    const hours = `${date.getHours()}`.padStart(2, '0');
+    const minutes = `${date.getMinutes()}`.padStart(2, '0');
+    const seconds = `${date.getSeconds()}`.padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+  }
+
+  private static formatTimeFloorToMinute(date: Date): string {
+    const hours = `${date.getHours()}`.padStart(2, '0');
+    const minutes = `${date.getMinutes()}`.padStart(2, '0');
+    return `${hours}:${minutes}:00`;
   }
 } 

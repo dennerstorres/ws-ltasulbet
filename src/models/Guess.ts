@@ -1,3 +1,4 @@
+import { In } from 'typeorm';
 import { AppDataSource } from '../config/ormconfig';
 import { Guess } from '../entities/Guess';
 
@@ -77,6 +78,22 @@ export class GuessModel {
   }
 
   /**
+   * Busca palpites por uma lista de jogos
+   * @param gameIds IDs dos jogos
+   * @returns Array de palpites
+   */
+  static async findByGameIds(gameIds: number[]): Promise<Guess[]> {
+    if (!gameIds.length) {
+      return [];
+    }
+
+    return await this.repository.find({
+      where: { gameId: In(gameIds) },
+      relations: ['user', 'game', 'team1', 'team2']
+    });
+  }
+
+  /**
    * Atualiza um palpite por ID
    * @param id ID do palpite
    * @param guessData Dados atualizados do palpite
@@ -127,5 +144,22 @@ export class GuessModel {
   static async unfinish(id: number): Promise<Guess | null> {
     await this.repository.update(id, { finished: false });
     return await this.findById(id);
+  }
+
+  /**
+   * Marca vários palpites como finalizados
+   * @param ids IDs dos palpites
+   */
+  static async finishMany(ids: number[]): Promise<void> {
+    if (!ids.length) {
+      return;
+    }
+
+    await this.repository
+      .createQueryBuilder()
+      .update(Guess)
+      .set({ finished: true })
+      .whereInIds(ids)
+      .execute();
   }
 } 
