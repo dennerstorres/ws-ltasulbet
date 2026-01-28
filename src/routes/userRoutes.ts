@@ -10,6 +10,7 @@ router.post('/', UserController.create);
 router.get('/', UserController.findAll);
 router.get('/:id', UserController.findById);
 router.put('/:id/password', UserController.updatePassword);
+router.put('/:id/password/reset', UserController.resetPassword);
 
 router.use(requireAdmin);
 

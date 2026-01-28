@@ -133,4 +133,37 @@ export class UserController {
       }
     }
   }
+
+  /**
+   * Resets the user's password without requiring the current password
+   * @param req Express request object containing user ID in params and the new password in body
+   * @param res Express response object
+   * @param next Express next function
+   */
+  static async resetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { newPassword } = req.body;
+
+      if (!newPassword) {
+        throw new AppError('New password is required', 400);
+      }
+
+      await UserModel.resetPassword(parseInt(req.params.id), newPassword);
+
+      res.status(200).json({
+        status: 'success',
+        message: 'Password reset successfully'
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === 'User not found') {
+          next(new AppError('User not found', 404));
+        } else {
+          next(error);
+        }
+      } else {
+        next(error);
+      }
+    }
+  }
 } 

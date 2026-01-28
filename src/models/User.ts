@@ -123,6 +123,23 @@ export class UserModel {
   }
 
   /**
+   * Resets user password without validating the current one
+   * @param id User ID
+   * @param newPassword New password
+   * @returns Boolean indicating if password was reset
+   */
+  static async resetPassword(id: number, newPassword: string): Promise<boolean> {
+    const user = await this.repository.findOneBy({ id });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const hashedPassword = await PasswordService.hashPassword(newPassword);
+    await this.repository.update(id, { password: hashedPassword });
+    return true;
+  }
+
+  /**
    * Validates user password
    * @param email User email
    * @param password Password to validate
