@@ -26,16 +26,19 @@
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "node-cron": "^3.0.3",
     "expo-server-sdk": "^3.14.0",
     "express": "^4.18.2",
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^3.14.0",
+    "node-cron": "^3.0.3",
     "reflect-metadata": "^0.2.2",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typeorm": "^0.3.21",
     "typescript": "^5.3.3",
     "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "@types/node-cron": "^3.0.11"
   }
 }
