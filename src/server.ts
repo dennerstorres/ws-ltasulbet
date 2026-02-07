@@ -14,6 +14,7 @@ import gameRoutes from './routes/gameRoutes';
 import guessRoutes from './routes/guessRoutes';
 import resultRoutes from './routes/resultRoutes';
 import pushNotificationRoutes from './routes/pushNotificationRoutes';
+import guessBlockingRoutes from './routes/guessBlockingRoutes';
 import { AppDataSource } from './config/ormconfig';
 import { GuessBlockingService } from './services/guessBlockingService';
 
@@ -34,6 +35,7 @@ app.use('/api/games', gameRoutes);
 app.use('/api/guesses', guessRoutes);
 app.use('/api/results', resultRoutes);
 app.use('/api/push', pushNotificationRoutes);
+app.use('/guess-blocking', guessBlockingRoutes);
 
 // Error handling
 app.use(notFoundHandler);
